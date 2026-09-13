@@ -1,0 +1,19 @@
+Reversi -- Lisa Pascal sources (tool 419309)
+
+Nothing to build yet. When REV A lands:
+
+sources/REV-MAIN.TEXT      the program
+sources/REV-GLOBALS.TEXT   unit globals (menu constants, panes)
+sources/REV-ALERTS.TEXT    alerts + menus (Alert tool input; menus match the
+                           mi* constants in GLOBALS BY POSITION)
+sources/REV-MAKE.TEXT      the Workshop exec: compile, link, Alert tool,
+                           InstallTool (tool 419309, name Reversi)
+sources/fmt_text.py        REQUIRED for building: converts each source to the
+                           Workshop paged .TEXT format (1024-byte header page,
+                           no line straddling a 1024 boundary, bare CR line
+                           endings). Raw text files will not compile.
+sources/fix_dc42.py        recomputes a DiskCopy 4.2 image's header checksums
+
+Build (same as LISACom): send the formatted files to their REV/ names on the
+Lisa, then from the Workshop: R <REV/MAKE. Afterwards L REV/= must show a NEW
+REV.OBJ -- the exec does not stop on a link error.
