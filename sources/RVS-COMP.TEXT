@@ -1,0 +1,19 @@
+$EXEC
+${ REV D  25-Sep-2026  No change; re-sent under the D name (release 1.0).   }
+${ REV C  25-Sep-2026  No change; re-sent under the C name.                  }
+${ REV B  24-Sep-2026  No change; re-sent under the B name.                  }
+${ REV A  23-Sep-2026  First build (cloned from PZL-COMP REV C).            }
+${==========================================================================}
+${ RVS-COMP.TEXT -- compile Lisa Reversi: GLOBALS, then MAIN.               }
+${==========================================================================}
+F{ilemgr}D{elete}RVS/GLOBALS.OBJ  Y{es}
+        D{elete}RVS/MAIN.OBJ  Y{es}
+        Q{uit}
+${                                                                          }
+P{ascal Compile}RVS/GLOBALS.TEXT
+{no listing file - this comment-only line is the [RETURN] answer}
+RVS/GLOBALS.OBJ
+P{ascal Compile}RVS/MAIN.TEXT
+{no listing file}
+RVS/MAIN.OBJ
+$ENDEXEC

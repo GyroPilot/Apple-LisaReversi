@@ -1,0 +1,36 @@
+$EXEC
+${ REV D  25-Sep-2026  No change; re-sent under the D name (release 1.0).   }
+${ REV C  25-Sep-2026  No change; re-sent under the C name.                  }
+${ REV B  24-Sep-2026  No change; re-sent under the B name.                  }
+${ REV A  23-Sep-2026  First build (cloned from PZL-MAKE REV C).  Icon file  }
+${                      RVSICONA.BIN -> RVS/ICON.BIN.  InstallTool is NOT    }
+${                      in this file: it is RVS/INSTALL, run separately     }
+${                      (R <RVS/INSTALL), because a keypress inside an exec }
+${                      eats the next line (the puzzle lesson).  The Alert  }
+${                      cache is 4000 bytes so the Alert tool should not    }
+${                      pause at all; if it does, press SPACE -- it is the   }
+${                      last step here, so nothing is lost.                 }
+${==========================================================================}
+${ RVS-MAKE.TEXT -- build Lisa Reversi: compile, link, put the Obj and     }
+${ ICON files in place as tool 419309 (reserved on the LisaList2 tool-    }
+${ number list), compile the phrase file.  THEN run RVS/INSTALL.  The     }
+${ tool number appears only here and in RVS/INSTALL.                       }
+${                                                                          }
+${ RVS/ICON.BIN must be on the disk before this runs.                       }
+${==========================================================================}
+$SUBMIT RVS/COMP
+$SUBMIT RVS/LINK
+${                                                                          }
+F{ilemgr}D{elete}~{T419309~}Obj
+Y{es}D{elete}~{T419309~}PHRASE
+Y{es}D{elete}~{T419309~}ICON
+Y{es}C{opy}RVS/RVS.OBJ
+~{T419309~}Obj
+C{opy}RVS/ICON.BIN
+~{T419309~}ICON
+Q{uit}
+${                                                                          }
+R{un}Alert
+RVS/ALERTS.TEXT
+~{T419309~}
+$ENDEXEC

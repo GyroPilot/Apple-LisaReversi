@@ -1,0 +1,30 @@
+$EXEC
+${ REV D  25-Sep-2026  No change; re-sent under the D name (release 1.0).   }
+${ REV C  25-Sep-2026  No change; re-sent under the C name.                  }
+${ REV B  24-Sep-2026  No change; re-sent under the B name.                  }
+${ REV A  23-Sep-2026  First build (cloned from PZL-INSTALL REV C).         }
+${==========================================================================}
+${ RVS-INSTALL.TEXT -- register Lisa Reversi (tool 419309) with the        }
+${ Office System.  Run AFTER RVS/MAKE:   R <RVS/INSTALL                    }
+${                                                                          }
+${ InstallTool asks exactly six questions, and every answer -- the Y/N    }
+${ ones included -- must be followed directly by RETURN.  So each answer  }
+${ below sits alone on its line with NOTHING after it; the explanations   }
+${ are on these dollar-brace lines, which the exec drops entirely.  The    }
+${ device answer is the empty line (RETURN = PARAPORT).                   }
+${                                                                          }
+${   1  overwrite an existing tool with the same number?  Y               }
+${   2  device the tool is on  [PARAPORT]                  RETURN          }
+${   3  tool id number                                     419309          }
+${   4  does the tool create documents?                    N               }
+${   5  specify a different opening rectangle?             N               }
+${   6  name of the tool                                   Lisa Reversi    }
+${==========================================================================}
+R{un}InstallTool
+Y
+
+419309
+N
+N
+Lisa Reversi
+$ENDEXEC

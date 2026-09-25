@@ -8,6 +8,7 @@
 *.PKG    binary
 *.OBJ    binary
 *.bin    binary
+*.BIN    binary
 *.py     text eol=lf
 *.md     text eol=lf
 *.txt    text eol=lf

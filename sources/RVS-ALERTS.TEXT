@@ -1,0 +1,138 @@
+; ==========================================================================
+;  RVS-ALERTS.TEXT -- phrase-file source for Lisa Reversi (419309).
+;  Compiled by the Workshop 'Alert' tool into T419309PHRASE.
+;  Comments on their OWN lines; blank lines are STRUCTURAL; alert numbers
+;  ascend and 1 and 2 are REQUIRED; each section ends with a lone 0.
+; ==========================================================================
+;
+; REV D -- 25-Sep-2026: RELEASE 1.0.  About (15) says 1.0 REV D; nothing else.
+; REV C -- 25-Sep-2026: About (15) 0.3 REV C; How to Play (16) mentions
+;   Switch Sides; Keys (17) gains the S line; Game menu gains "Switch Sides/S"
+;   as item 5 (miSides in GLOBALS).  Alert numbers unchanged.
+; REV B -- 24-Sep-2026: About (15) says 0.2 REV B.  Keys (17) reflowed, one
+;   key per line, every line under 48 characters: the Alert manager wraps
+;   there and the REV A lines broke mid-phrase on the 2/10.  Menus unchanged.
+; REV A -- 23-Sep-2026: first build.  Menus are matched BY POSITION against
+;   the mi* constants in RVS-GLOBALS; a '-' separator counts as a position.
+;   Cache bytes 4000 (LisaFileMover's figure): the Alert tool pauses "Type
+;   SPACE to continue" when the cache is below its suggestion, and inside an
+;   exec that keypress eats the next line (the puzzle lesson).  There is no
+;   picture on the heap here, so the cache can be generous.
+;
+; ---- FILE HEADER ---------------------------------------------------------
+1
+4
+4000
+?
+Wait
+Stop
+Note
+Caution
+Cancel
+OK
+
+; ==== ALERTS ==============================================================
+;
+1 note alert
+Lisa Reversi could not find the message that belongs here.
+If you cannot proceed, mention the number ^N.
+
+2 stop alert
+Lisa Reversi is having trouble reaching the disk that holds the
+tool.^L^L
+Put your documents away one at a time, or press the on-off button to
+save them all.
+
+10 note alert
+You have no legal move, so your turn is skipped.^L^L
+Lisa moves again.
+
+11 note alert
+Lisa has no legal move, so her turn is skipped.^L^L
+It is your move again.
+
+12 note alert
+Game over -- you win!^L^L
+The final score is on the right.  N starts a new game.
+
+13 note alert
+Game over -- Lisa wins.^L^L
+The final score is on the right.  N starts a new game; U takes back
+your last move if you want to try a different ending.
+
+14 note alert
+Game over -- a draw.^L^L
+The final score is on the right.  N starts a new game.
+
+15 note alert
+Lisa Reversi 1.0 REV D^L^L
+Reversi on the Apple Lisa.  You play black and move first; Lisa plays
+white (Switch Sides in the Game menu swaps that).  The Level menu sets
+how many moves ahead Lisa looks (1 to 4); at levels 3 and 4 she plays
+the last eight or nine moves perfectly.^L^L
+See the Help menu: How to Play (H) and Keys.^L
+Tool 419309.  T. O'Connor (bmwcyclist), 2026.
+
+16 note alert
+How to play^L^L
+A move places one of your discs so that a straight line of Lisa's
+discs -- across, up and down, or diagonal -- is caught between it and
+another of yours.  Those discs turn over to your color.  Every move
+must turn at least one disc; the dots on the board show where you can
+play.  If you have no move your turn is skipped.^L^L
+The game ends when neither side can move.  The most discs wins.
+Corners are worth having: a corner disc can never be turned.^L^L
+Black moves first.  You are black unless you choose Switch Sides in
+the Game menu, which starts a new game with Lisa opening as black.
+
+17 note alert
+Keys^L^L
+4 6 8 2 (keypad) or J L I K ... move the cursor^L
+RETURN or SPACE ... play the cursor cell^L
+Mouse ... click a cell to play there^L
+N ... new game (Apple-N)^L
+U ... take back your last move (Apple-U)^L
+D ... show or hide the legal-move dots (Apple-D)^L
+S ... switch sides: new game, Lisa opens (Apple-S)^L
+1 2 3 4 ... Lisa's level, 1 easy to 4 hardest^L
+H ... How to Play (Apple-H)
+
+18 caution cancel alert
+Start a new game?^L^L
+The game in progress is abandoned.
+
+0
+
+; ==== MENUS ===============================================================
+1
+File/Print
+Set Aside Everything
+Set Aside "Lisa Reversi"
+-
+Save & Put Away
+
+2
+Game
+New Game/N
+Undo/U
+-
+Show or Hide Legal Moves/D
+Switch Sides/S
+
+3
+Level
+1  Easy/1
+2  Normal/2
+3  Hard/3
+4  Hardest/4
+
+4
+Help
+How to Play/H
+Keys
+
+5
+Version
+About Lisa Reversi
+
+0

@@ -1,0 +1,195 @@
+unit RvsGlobals;
+
+{ REV D  25-Sep-2026  RELEASE 1.0: version string only.                 }
+{ REV C  25-Sep-2026  1. human / lisaC: which colour the player has      }
+{                      (Switch Sides).  2. solveAt: the empties count    }
+{                      from which each level solves the game exactly.   }
+{                      3. Game menu gains Switch Sides/S (item 5).       }
+{                      4. Version 0.3 REV C.                             }
+{ REV B  24-Sep-2026  Version string only (0.2 REV B).                    }
+{ REV A  23-Sep-2026  First increment of Lisa Reversi (tool 419309,      }
+{                      reserved on the LisaList2 list).  Shared state    }
+{                      and the Filer handshake, cloned from PZL-GLOBALS  }
+{                      REV C (Lisa Slide Puzzle 1.0, proven on the 2/10). }
+{                      No picture buffer: the board is drawn with        }
+{                      QuickDraw ovals, so the heap only holds the alert }
+{                      cache and the menus.  Game state added at the end. }
+
+{ RVS-GLOBALS.TEXT -- Lisa Reversi.                                      }
+{ Reversi on an 8 x 8 board.  You are black and move first; Lisa is     }
+{ white.  Level 1-4 is how many plies ahead Lisa looks.  The board and  }
+{ the search live here so MAIN's procedures can share them.             }
+
+INTERFACE
+
+uses (*$U UnitStd.obj *)   UnitStd,
+     (*$U UnitHz.obj *)    UnitHz,
+     (*$U Storage.obj *)   Storage,
+     (*$U QuickDraw.obj *) QuickDraw,
+     (*$U Fontmgr.obj *)   FontMgr,
+     (*$U SysCall.obj *)   SysCall,
+     (*$U wm.events.obj *) Events,
+     (*$U wm.folders.obj *) Folders,
+     (*$U wm.menus.obj *)  Menus,
+     (*$U AlertMgr.obj *)  AlertMgr,
+     (*$U WMLstd.obj *)    WMLstd,
+     (*$U WMlCrs.obj *)    WMLCrs,
+     (*$U FilerComm.obj *) FilerComm;
+
+const
+   rvsVersion = 'Lisa Reversi 1.0 REV D';
+
+   { The window, the same size as the puzzle's: 680 x 300.               }
+   winW      = 680;
+   winH      = 300;
+
+   { The board: 8 x 8 cells of 34 px = 272 x 272, with room for the     }
+   { column letters above and the row numbers on the left.              }
+   cellPx    = 34;
+   boardX    = 24;            { left edge of the grid in the window }
+   boardY    = 18;            { top edge of the grid }
+   boardPx   = 272;           { cellPx * 8 }
+   panelX    = 330;           { the status panel starts here }
+
+   { Cell contents.  The board is 10 x 10 with a border of cEdge cells  }
+   { so the direction walks never leave the array.  Cell = row*10+col, }
+   { rows and columns 1..8; row 1 is the top of the board.              }
+   cEmpty    = 0;
+   cBlack    = 1;             { the player }
+   cWhite    = 2;             { Lisa }
+   cEdge     = 3;
+
+   maxHist   = 60;            { snapshots before each player move }
+   maxLevel  = 4;
+
+   { Menus.  A '-' separator COUNTS as an item position.                 }
+   mFile = 1;                 { "File/Print" }
+      miAsideAll = 1;
+      miAside    = 2;
+      { 3 is a separator }
+      miPutAway  = 4;
+
+   mGame = 2;                 { "Game" }
+      miNew    = 1;           { New Game/N }
+      miUndo   = 2;           { Undo/U }
+      { 3 is a separator }
+      miDots   = 4;           { Show/Hide Legal Moves/D }
+      miSides  = 5;           { Switch Sides/S  (REV C) }
+
+   mLevel = 3;                { "Level" }
+      miLevel1 = 1;
+      miLevel2 = 2;
+      miLevel3 = 3;
+      miLevel4 = 4;
+
+   mHelp = 4;                 { "Help" }
+      miHowTo  = 1;           { How to Play/H }
+      miKeys   = 2;           { Keys }
+
+   mVer = 5;                  { "Version" }
+      miAbout  = 1;
+
+   lastBarMenu = 5;
+   lastMenu    = 5;
+
+   alertVerNum = 1;
+   { Identifiers are unique in their first 8 characters, hence the      }
+   { short names.                                                        }
+   alrtUSkip  = 10;           { you have no move: Lisa moves again }
+   alrtLSkip  = 11;           { Lisa has no move: your turn again }
+   alrtWin    = 12;           { game over: you win }
+   alrtLose   = 13;           { game over: Lisa wins }
+   alrtDraw   = 14;           { game over: a draw }
+   alrtAbout  = 15;           { the About box }
+   alrtHow    = 16;           { How to Play }
+   alrtKeys   = 17;           { Keys }
+   alrtNewG   = 18;           { caution cancel: abandon this game? }
+
+   { The heap holds the alert cache (4000 bytes) and the menus; there   }
+   { is no picture here.  6,000 integers = 12,000 bytes.                }
+   maxHeap = 6000;
+
+type
+   TBoard   = ARRAY[0..99] of -128..127;   { 100 bytes }
+   TMoveList = ARRAY[1..64] of integer;
+   TWeights = ARRAY[0..99] of integer;
+
+var
+   theEvent  : EventRecord;
+   myWindow  : WindowPtr;
+   toldToDie : boolean;
+   initing   : boolean;
+   myMenus   : array [1..lastMenu] of MenuInfo;
+   allAlerts : TAlertFile;
+   myZone    : array [0..maxHeap] of integer;
+
+   { the game }
+   human     : integer;       { REV C: the player's colour, cBlack or cWhite }
+   lisaC     : integer;       { Lisa's colour: 3 - human }
+   solveAt   : array [1..maxLevel] of integer;  { REV C: exact solve from
+                                                  this many empties (0 = never) }
+   board     : TBoard;
+   hist      : array [1..maxHist] of TBoard;
+   nHist     : integer;       { snapshots stored (= player moves made) }
+   level     : integer;       { 1..4 plies }
+   showDots  : boolean;       { legal-move dots on the board }
+   gameOver  : boolean;
+   started   : boolean;       { a move has been made in this game }
+   legal     : TMoveList;     { the player's legal moves, this turn }
+   nLegal    : integer;
+   cursorR   : integer;       { keyboard cursor, rows / columns 1..8 }
+   cursorC   : integer;
+   lastYou   : integer;       { cell of your last move, 0 = none }
+   lastLisa  : integer;       { cell of Lisa's last move, 0 = none }
+   nodes     : longint;       { positions Lisa looked at, last move }
+   status    : Str255;        { the message line in the panel }
+   thinking  : boolean;       { "Lisa is thinking..." is on the panel }
+
+   { the search }
+   weight    : TWeights;      { positional value of each cell }
+   order     : TMoveList;     { the 64 board cells, best cells first }
+   dirs      : array [1..8] of integer;   { the eight direction steps }
+   seed      : longint;       { random generator state }
+   idleCnt   : longint;       { idle passes: stirred into the seed }
+
+procedure HandleFilerOp (var wantsOpen : boolean);
+
+
+IMPLEMENTATION
+
+procedure HandleFilerOp {var wantsOpen : boolean};
+var fx  : FilerExt;
+    err : integer;
+begin
+   wantsOpen := false;
+   GetAddParms(err, theEvent, fx);
+
+   case fx.theFlrOp of
+
+      fcNone :
+         wantsOpen := true;              { the user opened the tool }
+
+      fcResume :
+         TellFiler(err, docClosd, internalError, theEvent.who);
+
+      fcClose, fcSuspend, fcShred :
+         begin
+            myWindow := nil;
+            TellFiler(err, docClosd, allOK, theEvent.who)
+         end;
+
+      fcCopy, fcPut :
+         TellFiler(err, docNotXfered, internalError, theEvent.who);
+
+      fcDfClose :
+         TellFiler(err, dfClosed, allOK, theEvent.who);
+
+      fcTerminate :
+         toldToDie := true;
+
+      otherwise
+
+   end
+end;
+
+end.

@@ -1,19 +1,31 @@
-Reversi -- Lisa Pascal sources (tool 419309)
+Lisa Reversi 1.0 (REV D) -- what is here and how to build it
 
-Nothing to build yet. When REV A lands:
-
-sources/REV-MAIN.TEXT      the program
-sources/REV-GLOBALS.TEXT   unit globals (menu constants, panes)
-sources/REV-ALERTS.TEXT    alerts + menus (Alert tool input; menus match the
-                           mi* constants in GLOBALS BY POSITION)
-sources/REV-MAKE.TEXT      the Workshop exec: compile, link, Alert tool,
-                           InstallTool (tool 419309, name Reversi)
+sources/RVS-MAIN.TEXT      the program: board drawing, rules (flips, passes,
+                           game over), the search (negamax / alpha-beta, carried
+                           score, folded last ply, exact endgame), cursor, undo,
+                           switch sides, panel, menus, events
+sources/RVS-GLOBALS.TEXT   unit RvsGlobals: constants, menu numbers, state, the
+                           Filer handshake
+sources/RVS-ALERTS.TEXT    alerts 1,2,10..18 + five menus, Alert tool input
+                           (cache bytes 4000)
+sources/RVS-COMP.TEXT      Workshop exec: compile GLOBALS then MAIN
+sources/RVS-LINK.TEXT      Workshop exec: link RVS/RVS.OBJ
+sources/RVS-MAKE.TEXT      Workshop exec: COMP, LINK, Filemgr copies of Obj and
+                           ICON, Alert tool (tool 419309)
+sources/RVS-INSTALL.TEXT   Workshop exec: InstallTool alone -- run after MAKE
+sources/RVS*D.TEXT         page-formatted copies of the seven above, REV D:
+                           MAIND 37,888  GLOBALSD 9,216  ALERTSD 6,144
+                           COMPD 2,048  LINKD 3,072  MAKED 3,072  INSTALLD 3,072
 sources/fmt_text.py        REQUIRED for building: converts each source to the
-                           Workshop paged .TEXT format (1024-byte header page,
-                           no line straddling a 1024 boundary, bare CR line
-                           endings). Raw text files will not compile.
-sources/fix_dc42.py        recomputes a DiskCopy 4.2 image's header checksums
+                           Workshop paged .TEXT format.  Raw files will not compile.
+sources/README_REV_D.txt   the build/test notes shipped with REV D
+icon/RVSICONA.BIN          the tool icon ({T419309}ICON), a Lisa FONT file
+icon/lisaicon2.py          PNG (48x32) -> ICON file
+icon/rvs_icon_A.png        the icon artwork
+releases/LISA_REVERSI_1_0.dc42   release floppy: the tool (DiskCopy 4.2, 400K,
+                           LOS 3.1)
 
-Build (same as LISACom): send the formatted files to their REV/ names on the
-Lisa, then from the Workshop: R <REV/MAKE. Afterwards L REV/= must show a NEW
-REV.OBJ -- the exec does not stop on a link error.
+Build: send the RVS*D.TEXT files as RVS/MAIN.TEXT etc. and the icon as
+RVS/ICON.BIN (that exact name, before MAKE); Save & Put Away the running
+tool; R <RVS/MAKE; R <RVS/INSTALL; restart the Office System; About says
+"1.0 REV D".

@@ -1,0 +1,22 @@
+$EXEC
+${ REV D  25-Sep-2026  No change; re-sent under the D name (release 1.0).   }
+${ REV C  25-Sep-2026  No change; re-sent under the C name.                  }
+${ REV B  24-Sep-2026  No change; re-sent under the B name.                  }
+${ REV A  23-Sep-2026  First build (cloned from PZL-LINK REV C).            }
+${==========================================================================}
+${ RVS-LINK.TEXT -- link Lisa Reversi.  Intrinsic units (QuickDraw, the    }
+${ WM units, AlertMgr, SysCall ...) are NOT named: the linker finds them   }
+${ through INTRINSIC.LIB.  Same recipe as PZL-LINK / LFU-LINK / SLD-LINK.  }
+${==========================================================================}
+F{ilemgr}D{elete}RVS/RVS.OBJ  Y{es}
+        Q{uit}
+${                                                                          }
+L{inker}RVS/MAIN.OBJ
+RVS/GLOBALS.OBJ
+IOSPASLIB.OBJ
+SYS1LIB.OBJ
+SYS2LIB.OBJ
+{end of the input list - this comment-only line is the blank answer}
+{no listing file - second blank answer}
+RVS/RVS.OBJ
+$ENDEXEC
